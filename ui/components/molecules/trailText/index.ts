@@ -1,0 +1,1 @@
+export { TrailText } from "./trailText";
