@@ -1,8 +1,12 @@
 import * as React from "react";
 import Image from "next/image";
-import useSWR from "swr";
 
+import useSWR from "swr";
 import styled from "styled-components";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 import { fetcher } from "../../../../pages/api";
 import { Text } from "../..";
@@ -33,17 +37,24 @@ interface DiscordUser {
   avatar: string;
 }
 
-interface Activity {
+export interface Emoji {
+  name: string;
+  id: number;
+  animated: boolean;
+}
+
+export interface Activity {
   type: number;
-  timestamps: Timestamps;
   state: string;
-  party: Party;
   name: string;
   id: string;
-  details: string;
+  emoji?: Emoji;
   created_at: number;
-  assets: Assets;
-  application_id: string;
+  application_id?: string;
+  timestamps?: Timestamps;
+  party?: Party;
+  details?: string;
+  assets?: Assets;
 }
 
 interface Timestamps {
@@ -70,7 +81,10 @@ export const Activity = () => {
   const [time, setTime] = React.useState(Date.now());
 
   const activity: Data = lanyard?.data;
-  const presence: Activity = activity?.activities[0];
+  const presence: Activity = activity?.activities.find(
+    (activity) => activity.type === 0
+  );
+  const spotify = activity?.activities.find((activity) => activity.type === 2);
 
   React.useEffect(() => {
     setInterval(() => setTime(Date.now()), 15000); // update every 15 seconds
@@ -82,41 +96,96 @@ export const Activity = () => {
     }
   }, [time]);
 
+  const avatar = `https://cdn.discordapp.com/avatars/186144292874485760/${activity?.discord_user.avatar}.png`;
+
   return (
     <Container>
-      <DiscordWrapper>
-        <DiscordAvatarWrapper>
-          <Avatar
-            src={`https://cdn.discordapp.com/avatars/186144292874485760/${activity?.discord_user.avatar}
-          .png`}
-            width={40}
-            height={40}
-            alt={"Discord profile avatar"}
-          />
-          <Status status={activity?.discord_status || DiscordStatus.OFFLINE} />
-        </DiscordAvatarWrapper>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <DiscordName
-            weight={theme.font.weight.bold}
-            color={theme.font.colors.white}
+      <div>{spotify && JSON.stringify(spotify.details)}</div>
+      <div>
+        {presence && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+            }}
           >
-            {activity?.discord_user.username}
-            <Text
-              weight={theme.font.weight.regular}
-              color={theme.font.colors.darkGray}
-              style={{ margin: "4px 0 0 2px" }}
-              size={theme.font.size.s}
+            <ActivityImage
+              src={`https://cdn.discordapp.com/app-assets/${BigInt(
+                presence.application_id
+              ).toString()}/${presence.assets.large_image}.png`}
+              height={50}
+              width={50}
+            />
+
+            <p
+              style={{
+                color: "white",
+                display: "flex",
+                flexDirection: "column",
+                textAlign: "right",
+                margin: "10px 0 10px 0",
+              }}
             >
-              #{activity?.discord_user.discriminator}
-            </Text>
-          </DiscordName>
-        </div>
-      </DiscordWrapper>
+              <span
+                style={{
+                  fontSize: theme.font.size.m,
+                  fontWeight: theme.font.weight.bold,
+                }}
+              >
+                {presence.name}
+              </span>
+              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
+                {presence.state}
+              </span>
+              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
+                {presence.details}
+              </span>
+              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
+                {dayjs(presence.timestamps?.start).fromNow(true)} elapsed
+              </span>
+            </p>
+          </div>
+        )}
+        <DiscordWrapper>
+          <DiscordAvatarWrapper>
+            <Avatar
+              src={avatar}
+              width={40}
+              height={40}
+              alt={"Discord profile avatar"}
+            />
+            <Status
+              status={activity?.discord_status || DiscordStatus.OFFLINE}
+            />
+          </DiscordAvatarWrapper>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <DiscordName
+              weight={theme.font.weight.bold}
+              color={theme.font.colors.white}
+            >
+              {activity?.discord_user.username}
+              <Text
+                weight={theme.font.weight.regular}
+                color={theme.font.colors.darkGray}
+                style={{ margin: "4px 0 0 2px" }}
+                size={theme.font.size.s}
+              >
+                #{activity?.discord_user.discriminator}
+              </Text>
+            </DiscordName>
+          </div>
+        </DiscordWrapper>
+      </div>
     </Container>
   );
 };
 
 const Container = styled.div`
+  display: flex;
+  justify-content: space-between;
+  left: 10px;
   position: absolute;
   padding: 10px;
   bottom: 10px;
@@ -163,4 +232,11 @@ const DiscordName = styled(Text)`
   margin-left: 10px;
   display: flex;
   align-items: center;
+`;
+
+const ActivityImage = styled(Image)`
+  border-radius: 10px;
+  z-index: 100 !important;
+  position: absolute !important;
+  right: 0 !important;
 `;
