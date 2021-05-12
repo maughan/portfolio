@@ -7,8 +7,8 @@ interface TransitionProps {
 
 export const Transition = (props: TransitionProps): JSX.Element => {
   const { children } = props;
-
   const [show] = React.useState(true);
+
   const transitions = useTransition(show, {
     from: { opacity: 0 },
     enter: { opacity: 1 },

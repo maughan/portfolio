@@ -1,14 +1,21 @@
 import * as React from "react";
 
-import { Page, TrailText, Activity } from "../ui/components";
+import { Page, TrailText, Activity, Transition } from "../ui/components";
 
 const Home = (): JSX.Element => {
   const [show, setShow] = React.useState(false);
+  const [footer, setFooter] = React.useState(false);
 
   React.useEffect(() => {
     setTimeout(() => {
       setShow(true);
     }, 1000);
+  });
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      setFooter(true);
+    }, 2000);
   });
 
   return (
@@ -19,7 +26,11 @@ const Home = (): JSX.Element => {
           items={["typescript", "javascript", "node", "nextjs"]}
         />
       )}
-      <Activity />
+      {footer && (
+        <Transition>
+          <Activity />
+        </Transition>
+      )}
     </Page>
   );
 };

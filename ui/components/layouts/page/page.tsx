@@ -21,38 +21,24 @@ export const Page = (props: PageProps): JSX.Element => {
   }, []);
 
   return (
-    <>
-      <style global jsx>
-        {`
-          html,
-          body,
-          body > div:first-child,
-          div#__next,
-          div#__next > div {
-            height: 100%;
-            overflow: hidden;
-          }
-        `}
-      </style>
-      <Container>
-        <Title>
-          <Text
-            size={theme.font.size.largest}
-            weight={theme.font.weight.bolder}
-            color={theme.font.colors.white}
-          >
-            {title}
-          </Text>
+    <Container>
+      <Title>
+        <Text
+          size={theme.font.size.largest}
+          weight={theme.font.weight.bolder}
+          color={theme.font.colors.white}
+        >
+          {title}
+        </Text>
 
-          {greeting && show && (
-            <Transition>
-              <span style={{ fontSize: theme.font.size.largest }}>👋</span>
-            </Transition>
-          )}
-        </Title>
-        {children}
-      </Container>
-    </>
+        {greeting && show && (
+          <Transition>
+            <span style={{ fontSize: theme.font.size.largest }}>👋</span>
+          </Transition>
+        )}
+      </Title>
+      {children}
+    </Container>
   );
 };
 
@@ -61,6 +47,7 @@ const Container = styled.div`
   max-width: 100vw;
   max-height: 100vh;
   padding: 20px;
+  user-select: none;
 `;
 
 const Title = styled.div`

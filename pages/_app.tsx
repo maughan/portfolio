@@ -1,11 +1,19 @@
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import * as React from "react";
+import "tailwindcss/tailwind.css";
 
 const GlobalStyle = createGlobalStyle`
   body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background-color: #1d1f21;
+  } 
+  body > div:first-child,
+  div#__next,
+  div#__next > div {
+    height: 100%;
+    overflow: hidden;
   } 
 `;
 

@@ -2,15 +2,12 @@ import * as React from "react";
 import Image from "next/image";
 
 import useSWR from "swr";
-import styled from "styled-components";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(relativeTime);
-
 import { fetcher } from "../../../../pages/api";
-import { Text } from "../..";
-import { theme } from "../../../../pages/_app";
+
+dayjs.extend(relativeTime);
 
 enum DiscordStatus {
   ONLINE = "online",
@@ -19,8 +16,17 @@ enum DiscordStatus {
   OFFLINE = "offline",
 }
 
+export interface Spotify {
+  track_id: string;
+  timestamps: Timestamps;
+  song: string;
+  artist: string;
+  album_art_url: string;
+  album: string;
+}
+
 interface Data {
-  spotify: any;
+  spotify: Spotify;
   listening_to_spotify: boolean;
   discord_user: DiscordUser;
   discord_status: DiscordStatus;
@@ -84,7 +90,7 @@ export const Activity = () => {
   const presence: Activity = activity?.activities.find(
     (activity) => activity.type === 0
   );
-  const spotify = activity?.activities.find((activity) => activity.type === 2);
+  const spotify = activity?.spotify;
 
   React.useEffect(() => {
     setInterval(() => setTime(Date.now()), 15000); // update every 15 seconds
@@ -99,144 +105,117 @@ export const Activity = () => {
   const avatar = `https://cdn.discordapp.com/avatars/186144292874485760/${activity?.discord_user.avatar}.png`;
 
   return (
-    <Container>
-      <div>{spotify && JSON.stringify(spotify.details)}</div>
-      <div>
-        {presence && (
+    <div
+      className={
+        "flex justify-between left-5 right-5 bottom-5 absolute padding-2 select-none"
+      }
+    >
+      <div className={"flex bottom-0 self-end text-white"}>
+        {spotify && (
           <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
-            }}
+            className={
+              "flex flex-col justify-start align-start select-none opacity-50 hover:opacity-100 cursor-pointer"
+            }
+            onClick={() =>
+              window.open(`https://open.spotify.com/track/${spotify.track_id}`)
+            }
           >
-            <ActivityImage
-              src={`https://cdn.discordapp.com/app-assets/${BigInt(
-                presence.application_id
-              ).toString()}/${presence.assets.large_image}.png`}
-              height={50}
-              width={50}
-            />
+            <div className={"flex align-end"}>
+              <Image
+                className={"rounded w-10 h-10"}
+                src={spotify.album_art_url}
+                height={60}
+                width={60}
+              />
+              <div
+                className={
+                  "flex flex-col text-left align-start justify-end ml-2"
+                }
+              >
+                <span className={"opacity-50 text-xs"}>
+                  Currently listening on Spotify
+                </span>
+                <span className={"text-base font-bold"}>{spotify.song}</span>
+                <span className={"opacity-50 text-xs"}>
+                  by {spotify.artist}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className={"opacity-50 hover:opacity-100"}>
+        {presence && (
+          <div className={"flex flex-col justify-end align-end"}>
+            <div className={"flex justify-end"}>
+              <Image
+                className={"rounded select-none"}
+                src={`https://cdn.discordapp.com/app-assets/${BigInt(
+                  presence.application_id
+                ).toString()}/${presence.assets.large_image}.png`}
+                height={60}
+                width={60}
+              />
+            </div>
 
             <p
-              style={{
-                color: "white",
-                display: "flex",
-                flexDirection: "column",
-                textAlign: "right",
-                margin: "10px 0 10px 0",
-              }}
+              className={"text-white flex flex-col text-right my-2 select-none"}
             >
-              <span
-                style={{
-                  fontSize: theme.font.size.m,
-                  fontWeight: theme.font.weight.bold,
-                }}
-              >
-                {presence.name}
-              </span>
-              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
-                {presence.state}
-              </span>
-              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
-                {presence.details}
-              </span>
-              <span style={{ opacity: 0.5, fontSize: theme.font.size.s }}>
+              <span className={"text-base font-bold"}>{presence.name}</span>
+              <span className={"opacity-50 text-xs"}>{presence.state}</span>
+
+              <span className={"opacity-50 text-xs"}>
                 {dayjs(presence.timestamps?.start).fromNow(true)} elapsed
               </span>
             </p>
           </div>
         )}
-        <DiscordWrapper>
-          <DiscordAvatarWrapper>
-            <Avatar
+        <div className={"flex"}>
+          <div className={"flex items-center mr-2"}>
+            <div className={"flex flex-col"}>
+              <p
+                className={
+                  "font-bold text-white ml-2 flex align-center select-none"
+                }
+              >
+                {activity?.discord_user.username}
+                <p
+                  className={
+                    "font-light text-white opacity-50 mt-0.5 select-none"
+                  }
+                >
+                  #{activity?.discord_user.discriminator}
+                </p>
+              </p>
+            </div>
+          </div>
+          <div className={"flex"}>
+            <Image
+              className={"rounded-full select-none"}
               src={avatar}
               width={40}
               height={40}
               alt={"Discord profile avatar"}
             />
-            <Status
-              status={activity?.discord_status || DiscordStatus.OFFLINE}
+            <div
+              className={
+                "w-5 h-5 bottom-0.5 absolute ml-6 rounded-full border-4"
+              }
+              style={{
+                backgroundColor:
+                  activity?.discord_status === DiscordStatus.DND
+                    ? "#ed4245"
+                    : activity?.discord_status === DiscordStatus.IDLE
+                    ? "#faa61a"
+                    : activity?.discord_status === DiscordStatus.OFFLINE
+                    ? "gray"
+                    : "#3ba55c",
+                borderColor: "#1d1f21",
+              }}
             />
-          </DiscordAvatarWrapper>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <DiscordName
-              weight={theme.font.weight.bold}
-              color={theme.font.colors.white}
-            >
-              {activity?.discord_user.username}
-              <Text
-                weight={theme.font.weight.regular}
-                color={theme.font.colors.darkGray}
-                style={{ margin: "4px 0 0 2px" }}
-                size={theme.font.size.s}
-              >
-                #{activity?.discord_user.discriminator}
-              </Text>
-            </DiscordName>
           </div>
-        </DiscordWrapper>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 };
-
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  left: 10px;
-  position: absolute;
-  padding: 10px;
-  bottom: 10px;
-  right: 10px;
-`;
-
-const DiscordWrapper = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const DiscordAvatarWrapper = styled.div`
-  display: flex;
-  user-select: none;
-`;
-
-const Avatar = styled(Image)`
-  border-radius: 100%;
-  user-select: none;
-  width: 40px;
-  height: 40px;
-`;
-
-const Status = styled.div<{ status: DiscordStatus }>`
-  width: 12px;
-  height: 12px;
-  bottom: 4px;
-  position: absolute;
-  border-radius: 100%;
-  margin-left: 25px;
-  border: 4px solid ${(props) => props.theme.colors.background};
-
-  background-color: ${(props) =>
-    props.status === DiscordStatus.DND
-      ? props.theme.colors.error
-      : props.status === DiscordStatus.IDLE
-      ? props.theme.colors.warning
-      : props.status === DiscordStatus.OFFLINE
-      ? "gray"
-      : props.theme.colors.success};
-`;
-
-const DiscordName = styled(Text)`
-  margin-left: 10px;
-  display: flex;
-  align-items: center;
-`;
-
-const ActivityImage = styled(Image)`
-  border-radius: 10px;
-  z-index: 100 !important;
-  position: absolute !important;
-  right: 0 !important;
-`;
