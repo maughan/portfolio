@@ -207,7 +207,7 @@ export const Activity = () => {
               </p>
             </div>
           </div>
-          <div className={"flex"}>
+          <div className={"flex justify-end"}>
             <Image
               className={"rounded-full select-none"}
               src={avatar}
