@@ -165,9 +165,8 @@ export const Activity = () => {
       <div className={"opacity-50 hover:opacity-100"}>
         {presence && (
           <div
-            className={
-              'flex flex-col justify-end align-end  style={{ maxWidth: "10rem" }}'
-            }
+            className={"flex flex-col justify-end align-end"}
+            style={{ maxWidth: "10rem" }}
           >
             <div className={"flex justify-end"}>
               <Image
