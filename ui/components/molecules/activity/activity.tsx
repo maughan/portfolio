@@ -106,6 +106,22 @@ export const Activity = () => {
     activity?.discord_user?.avatar || "c35a5a9454e77a13bab73c8c23368e56"
   }.png`;
 
+  function handlePresenceIcon() {
+    if (presence) {
+      if (presence.assets) {
+        return `https://cdn.discordapp.com/app-assets/${BigInt(
+          presence.application_id
+        ).toString()}${
+          presence.assets ? `/${presence.assets.large_image}` : ""
+        }.png`;
+      }
+      if (presence.application_id === "356875057940791296") {
+        return "/csgo.png";
+      }
+    }
+    return;
+  }
+
   return (
     <div
       className={
@@ -152,11 +168,7 @@ export const Activity = () => {
             <div className={"flex justify-end"}>
               <Image
                 className={"rounded select-none"}
-                src={`https://cdn.discordapp.com/app-assets/${BigInt(
-                  presence.application_id
-                ).toString()}${
-                  presence.assets && `/${presence.assets.large_image}`
-                }.png`}
+                src={handlePresenceIcon()}
                 height={60}
                 width={60}
               />
