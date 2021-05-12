@@ -154,7 +154,9 @@ export const Activity = () => {
                 className={"rounded select-none"}
                 src={`https://cdn.discordapp.com/app-assets/${BigInt(
                   presence.application_id
-                ).toString()}/${presence.assets.large_image}.png`}
+                ).toString()}${
+                  presence.assets && `/${presence.assets.large_image}`
+                }.png`}
                 height={60}
                 width={60}
               />
@@ -164,7 +166,9 @@ export const Activity = () => {
               className={"text-white flex flex-col text-right my-2 select-none"}
             >
               <span className={"text-base font-bold"}>{presence.name}</span>
-              <span className={"opacity-50 text-xs"}>{presence.state}</span>
+              {presence.state && (
+                <span className={"opacity-50 text-xs"}>{presence.state}</span>
+              )}
 
               <span className={"opacity-50 text-xs"}>
                 {dayjs(presence.timestamps?.start).fromNow(true)} elapsed
