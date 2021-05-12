@@ -164,7 +164,7 @@ export const Activity = () => {
           </div>
         )}
       </div>
-      <div className={"opacity-50 hover:opacity-100"}>
+      <div className={"opacity-50 hover:opacity-100 flex flex-col justify-end"}>
         {presence && (
           <div
             className={"flex flex-col justify-end align-end"}
