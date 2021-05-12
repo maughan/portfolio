@@ -188,7 +188,7 @@ export const Activity = () => {
             </p>
           </div>
         )}
-        <div className={"flex"}>
+        <div className={"flex justify-end"}>
           <div className={"flex items-center mr-2"}>
             <div className={"flex flex-col"}>
               <p
@@ -207,7 +207,7 @@ export const Activity = () => {
               </p>
             </div>
           </div>
-          <div className={"flex justify-end"}>
+          <div className={"flex "}>
             <Image
               className={"rounded-full select-none"}
               src={avatar}
