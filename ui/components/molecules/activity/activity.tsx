@@ -102,7 +102,9 @@ export const Activity = () => {
     }
   }, [time]);
 
-  const avatar = `https://cdn.discordapp.com/avatars/186144292874485760/${activity?.discord_user.avatar}.png`;
+  const avatar = `https://cdn.discordapp.com/avatars/186144292874485760/${
+    activity?.discord_user?.avatar || "c35a5a9454e77a13bab73c8c23368e56"
+  }.png`;
 
   return (
     <div
