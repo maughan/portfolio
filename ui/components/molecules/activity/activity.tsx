@@ -188,7 +188,7 @@ export const Activity = () => {
             </p>
           </div>
         )}
-        <div className={"flex justify-end"}>
+        <div className={"flex justify-end"} style={{ maxWidth: "10rem" }}>
           <div className={"flex items-center mr-2"}>
             <div className={"flex flex-col"}>
               <p
