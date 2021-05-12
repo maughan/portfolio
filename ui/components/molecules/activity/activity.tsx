@@ -98,7 +98,7 @@ export const Activity = () => {
 
   React.useEffect(() => {
     if (!isValidating) {
-      mutate();
+      mutate().then(() => {});
     }
   }, [time]);
 
