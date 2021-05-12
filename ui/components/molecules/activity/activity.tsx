@@ -138,16 +138,18 @@ export const Activity = () => {
               window.open(`https://open.spotify.com/track/${spotify.track_id}`)
             }
           >
-            <div className={"flex align-end"}>
-              <Image
-                className={"rounded w-10 h-10"}
-                src={spotify.album_art_url}
-                height={60}
-                width={60}
-              />
+            <div className={"flex flex-col align-end items-center sm:flex-row"}>
+              <div className={"flex self-start w-100 h-100 sm:items-center "}>
+                <Image
+                  className={"rounded"}
+                  src={spotify.album_art_url}
+                  height={60}
+                  width={60}
+                />
+              </div>
               <div
                 className={
-                  "flex flex-col text-left align-start justify-end ml-2"
+                  "flex flex-col text-left align-start justify-end mt-2 sm:mt-0 sm:ml-2"
                 }
               >
                 <span className={"opacity-50 text-xs"}>
@@ -210,18 +212,18 @@ export const Activity = () => {
               </p>
             </div>
           </div>
-          <div className={"flex "}>
-            <Image
-              className={"rounded-full select-none"}
-              src={avatar}
-              width={40}
-              height={40}
-              alt={"Discord profile avatar"}
-            />
+          <div className={"flex object-contain"}>
+            <div style={{ height: 40, width: 40 }}>
+              <Image
+                className={"rounded-full select-none "}
+                src={avatar}
+                width={40}
+                height={40}
+                alt={"Discord profile avatar"}
+              />
+            </div>
             <div
-              className={
-                "w-5 h-5 bottom-0.5 absolute ml-6 rounded-full border-4"
-              }
+              className={"w-5 h-5 rounded-full border-4 mb-0 mt-5 -ml-3 z-10"}
               style={{
                 backgroundColor:
                   activity?.discord_status === DiscordStatus.DND
